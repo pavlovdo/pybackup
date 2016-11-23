@@ -1,6 +1,6 @@
 #!/bin/bash
 
-PROJECT=`basename \`pwd\``
+PROJECT=`basename \`dirname $0\``
 OUTPUTFILE=/usr/local/orbit/$PROJECT/data/output
 
 if [ -f $OUTPUTFILE ]

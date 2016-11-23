@@ -1,9 +1,17 @@
 #!/bin/bash
 
-sudo docker build -t ubuntu:pyconfigvc .
-sudo docker save -o ubuntu-pyconfigvc-$BUILD_NUMBER.img ubuntu:pyconfigvc
-sudo chown jenkins:jenkins ubuntu-pyconfigvc-$BUILD_NUMBER.img
-scp ubuntu-pyconfigvc-$BUILD_NUMBER.img jenkins@eye.forum.lo:/usr/local/docker/ubuntu-pyconfigvc.img
-ssh jenkins@eye.forum.lo 'touch /usr/local/docker/docker.newimage'
-#ssh jenkins@eye.forum.lo 'sudo docker load -q -i ubuntu-pyconfigvc-$BUILD_NUMBER.img'
-#ssh jenkins@eye.forum.lo 'sudo docker run -d -t -v /usr/local/orbit/pyconfigvc ubuntu:pyconfigvc'
+PROJECT=`basename $WORKSPACE`
+PRODUCTION_SERVER=backup2.forum.lo
+PRODUCTION_DIR=/usr/local/orbit
+
+sudo docker build -t ubuntu:$PROJECT .
+sudo docker save -o ubuntu-$PROJECT-$BUILD_NUMBER.img ubuntu:$PROJECT
+sudo chown jenkins:jenkins ubuntu-$PROJECT-$BUILD_NUMBER.img
+scp ubuntu-$PROJECT-$BUILD_NUMBER.img jenkins@$PRODUCTION_SERVER:$PRODUCTION_DIR/$PROJECT/docker-ubuntu-$PROJECT.img
+scp dockercheck.sh jenkins@$PRODUCTION_SERVER:$PRODUCTION_DIR/$PROJECT/dockercheck.sh
+scp outputsend.sh jenkins@$PRODUCTION_SERVER:$PRODUCTION_DIR/$PROJECT/outputsend.sh
+ssh jenkins@$PRODUCTION_SERVER "echo '*/5 * * * *	$PRODUCTION_DIR/$PROJECT/dockercheck.sh' > /tmp/crontab"
+ssh jenkins@$PRODUCTION_SERVER "echo '30 05 * * *       $PRODUCTION_DIR/$PROJECT/outputsend.sh' >> /tmp/crontab"
+ssh jenkins@$PRODUCTION_SERVER "crontab /tmp/crontab"
+ssh jenkins@$PRODUCTION_SERVER "rm /tmp/crontab"
+ssh jenkins@$PRODUCTION_SERVER "touch $PRODUCTION_DIR/$PROJECT/$PROJECT.docker.newimage"
