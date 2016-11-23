@@ -11,4 +11,5 @@ ADD pybackup.py /usr/local/orbit/pybackup/pybackup.py
 RUN echo "00 05 * * *	/usr/local/orbit/pybackup/pybackup.py > /usr/local/orbit/pybackup/data/output" > /tmp/crontab
 RUN crontab /tmp/crontab
 RUN rm /tmp/crontab
+VOLUME ["/backup:/backup"]
 CMD /usr/sbin/cron -f
