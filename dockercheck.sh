@@ -9,6 +9,7 @@ then
 	sudo docker stop $(sudo docker ps | grep $PROJECT | awk '{print substr($1,1)}')	
 	sudo docker load -i $PRODUCTION_DIR/$PROJECT/docker-ubuntu-$PROJECT.img
 	if $HOST_MOUNT_DIR
+	then
 		sudo docker run -d -t -v $PRODUCTION_DIR/$PROJECT/data:$PRODUCTION_DIR/$PROJECT/data -v $HOST_MOUNT_DIR:$HOST_MOUNT_DIR ubuntu:$PROJECT
 	else
 		sudo docker run -d -t -v $PRODUCTION_DIR/$PROJECT/data:$PRODUCTION_DIR/$PROJECT/data ubuntu:$PROJECT
