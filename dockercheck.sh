@@ -6,7 +6,7 @@ HOST_MOUNT_DIR=/backup
 
 if [ -f $PRODUCTION_DIR/$PROJECT/$PROJECT.docker.newimage ]
 then
-	PROJECTCONTAINERS=`sudo docker ps | grep $PROJECT | awk '{print substr($1,1)}'`
+	PROJECTCONTAINERS=`sudo docker ps --filter ancestor=ubuntu:$PROJECT --format "table {{.ID}}"
 	echo 'Stopping containers '$PROJECTCONTAINERS ' of project '$PROJECT
 	sudo docker stop $PROJECTCONTAINERS
 	echo -e '\nLoading of new image ubuntu:'$PROJECT 'from '$PRODUCTION_DIR'/'$PROJECT'/docker-ubuntu-'$PROJECT'.img'
