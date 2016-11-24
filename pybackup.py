@@ -6,7 +6,7 @@ import os
 
 # Read the configuration file with parameters,
 # location of configuration file - as in production system
-backup_parameters = configread('./pybackup.conf',
+backup_parameters = configread('/usr/local/orbit/pybackup/pybackup.conf',
                                'Backup', 'backup_main_dir')
 
 for entry in os.scandir(backup_parameters['backup_main_dir']):
