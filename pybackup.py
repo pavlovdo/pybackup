@@ -17,7 +17,7 @@ for entry1 in os.scandir(backup_parameters['backup_main_dir']):
                 creation_hours_ago = int((time.time()
                                          - os.stat(entry2.path).st_ctime)/3600)
                 print('File', entry2.path, 'was created', creation_hours_ago,
-                      'hours ago')
+                      'hours ago\n')
                 if creation_hours_ago > 744:
                     os.remove(entry2.path)
-                    print('File', entry2.path, 'was deleted')
+                    print('File', entry2.path, 'was deleted\n')
