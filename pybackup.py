@@ -12,7 +12,12 @@ backup_parameters = configread('/usr/local/orbit/pybackup/pybackup.conf',
 
 for entry1 in os.scandir(backup_parameters['backup_main_dir']):
     if entry1.is_dir():
-        for entry2 in os.scandir(entry1):
+        for entry2 in os.scandir(entry1.path):
             if entry2.is_file():
-                print(entry1.name, entry2.name,
-                      int((time.time() - os.stat(entry2.path).st_mtime)/3600))
+                creation_hours_ago = int((time.time()
+                                         - os.stat(entry2.path).st_ctime)/3600)
+                print('File', entry2.path, 'was created', creation_hours_ago,
+                      'hours ago')
+                if creation_hours_ago > 744:
+                    os.remove(entry2.path)
+                    print('File', entry2.path, 'was deleted')
