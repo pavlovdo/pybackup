@@ -1,4 +1,4 @@
-FROM ubuntu:python3-cron
+FROM dr.forum.lo/ubuntu:python3-cron
 MAINTAINER Denis O. Pavlov pavlovdo@gmail.com
 
 RUN apt-get update &&\

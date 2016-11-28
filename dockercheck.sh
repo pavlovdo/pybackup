@@ -9,8 +9,6 @@ then
 	PROJECTCONTAINERS=`sudo docker ps --filter ancestor=ubuntu:$PROJECT --format "table {{.ID}}" | sed '1,1d'`
 	echo 'Stopping project '$PROJECT' containers:'
 	sudo docker stop $PROJECTCONTAINERS
-	echo -e '\nLoading of new image ubuntu:'$PROJECT 'from '$PRODUCTION_DIR'/'$PROJECT'/docker-ubuntu-'$PROJECT'.img'
-	sudo docker load -i $PRODUCTION_DIR/$PROJECT/docker-ubuntu-$PROJECT.img
 	if [ -z $HOST_MOUNT_DIR ]
 	then
 		echo -e '\nRunning of container from image ubuntu:'$PROJECT' with mounting '$PRODUCTION_DIR'/'$PROJECT'/data:'$PRODUCTION_DIR'/'$PROJECT'/data'
