@@ -5,9 +5,12 @@ from configread import configread
 import os
 import time
 
+conf_file = ('/etc/orbit/' + os.path.basename(__file__).split('.')[0] + '/'
+             + os.path.basename(__file__).split('.')[0] + '.conf')
+
 # Read the default configuration file with parameters,
 # location of configuration file - as in production system
-backup_parameters = configread('Backup', 'backup_main_dir')
+backup_parameters = configread(conf_file, 'Backup', 'backup_main_dir')
 
 for entry1 in os.scandir(backup_parameters['backup_main_dir']):
     if entry1.is_dir():

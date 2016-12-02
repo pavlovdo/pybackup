@@ -1,25 +1,13 @@
 #!/usr/bin/env python3
 
 
-def config_file_default():
-
-    import os
-
-    conf_file_default = ('/etc/orbit/'
-                         + os.path.basename(__file__).split('.')[0]
-                         + '/'
-                         + os.path.basename(__file__).split('.')[0] + '.conf')
-
-    return conf_file_default
-
-
-def configread(config_file=config_file_default, section, *parameters):
+def configread(conf_file, section, *parameters):
 
     import configparser
 
     # Read the Orbit configuration file
     config = configparser.RawConfigParser()
-    config.read(config_file)
+    config.read(conf_file)
     params = dict()
 
     for parameter in parameters:
@@ -27,6 +15,6 @@ def configread(config_file=config_file_default, section, *parameters):
             params[parameter] = config.get(section, parameter)
         except configparser.NoOptionError as err:
             print (err, '. Please set ' + parameter + ' value in the ' +
-                   'configuration file ' + config_file)
+                   'configuration file ' + conf_file)
 
     return params
