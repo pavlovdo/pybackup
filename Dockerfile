@@ -1,8 +1,7 @@
 FROM dr.forum.lo/ubuntu:python3-cron
 MAINTAINER Denis O. Pavlov pavlovdo@gmail.com
 
-RUN apt-get update && apt-get upgrade -y \
-	&& rm -rf /var/lib/apt/lists/*
+RUN apt-get update
 
 COPY *.py /usr/local/orbit/pybackup/
 
