@@ -2,12 +2,16 @@ FROM ubuntu:latest
 MAINTAINER Denis O. Pavlov pavlovdo@gmail.com
 
 RUN apt-get update &&\
-    	apt-get install cron -y &&\
-	apt-get install curl -y &&\
-	apt-get install python3 -y
+	apt-get -y install apt-utils &&\
+    	apt-get -y install cron &&\
+	apt-get -y install curl &&\
+	apt-get -y install python3
 
 ENV TZ=Europe/Moscow
-RUN echo $TZ | tee /etc/timezone && dpkg-reconfigure --frontend noninteractive tzdata
+ENV DEBIAN_FRONTEND=noninteractive
+#RUN echo $TZ | tee /etc/timezone && dpkg-reconfigure --frontend noninteractive tzdata
+
+RUN ln -fs /usr/share/zoneinfo/Europe/Moscow /etc/localtime && dpkg-reconfigure --frontend noninteractive tzdata
 
 COPY *.py /usr/local/orbit/pybackup/
 
