@@ -6,6 +6,9 @@ RUN apt-get update &&\
 	apt-get install curl -y &&\
 	apt-get install python3 -y
 
+ENV TZ=Europe/Moscow
+RUN echo $TZ | tee /etc/timezone && dpkg-reconfigure --frontend noninteractive tzdata
+
 COPY *.py /usr/local/orbit/pybackup/
 
 RUN echo "00 04 * * *   /usr/local/orbit/pybackup/pybackup.py > /usr/local/orbit/pybackup/data/output" > /tmp/crontab && \
