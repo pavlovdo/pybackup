@@ -8,7 +8,7 @@ HOST_MOUNT_DIR=/backup
 PROJECTCONTAINERS=`sudo docker ps -q --filter ancestor=ubuntu:$PROJECT`
 
 #if [ -z $PROJECTCONTAINERS ] || [ -f $PRODUCTION_DIR/$PROJECT/$PROJECT.docker.newimage ]
-if [ -z $PROJECTCONTAINERS ]
+if [ $PROJECTCONTAINERS ]
 then
 	echo 'Stopping project '$PROJECT' containers:'
 	sudo docker stop $PROJECTCONTAINERS
