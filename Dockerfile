@@ -1,11 +1,10 @@
 FROM ubuntu:latest
 MAINTAINER Denis O. Pavlov pavlovdo@gmail.com
 
-RUN apt-get update &&\
-	apt-get -y install apt-utils &&\
-    	apt-get -y install cron &&\
-	apt-get -y install curl &&\
-	apt-get -y install python3
+RUN apt-get update && apt-get install -y \
+        cron \
+        curl \
+        python3
 
 ENV TZ=Europe/Moscow
 ENV DEBIAN_FRONTEND=noninteractive
