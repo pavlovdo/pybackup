@@ -1,7 +1,10 @@
-FROM dr.forum.lo/ubuntu:python3-cron
+FROM ubuntu:latest
 MAINTAINER Denis O. Pavlov pavlovdo@gmail.com
 
-RUN apt-get update
+RUN apt-get update &&\
+    	apt-get install python3 -y &&\
+	apt-get install curl -y &&\
+	apt-get install cron -y
 
 COPY *.py /usr/local/orbit/pybackup/
 
