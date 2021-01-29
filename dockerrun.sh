@@ -1,16 +1,11 @@
 #!/bin/bash
 
-PROJECT=`basename \`dirname $0\``
-PRODUCTION_DIR=/usr/local/orbit
-CONFIG_DIR=/etc/orbit/$PROJECT
-CONTAINER_OS=centos
-HOST_MOUNT_DIR=
+readonly PROJECT=pybackup
+readonly CONFIG_DIR=/usr/local/orbit/$PROJECT/conf.d
 
-if [ -z $HOST_MOUNT_DIR ]
-    then
-        echo -e '\nRunning of container from image '$CONTAINER_OS':'$PROJECT' with mounting '$PRODUCTION_DIR'/'$PROJECT'/data:'$PRODUCTION_DIR'/'$PROJECT'/data and '$CONFIG_DIR':'$CONFIG_DIR':ro'
-        sudo docker run -d -t --restart=always -v $PRODUCTION_DIR/$PROJECT/data:$PRODUCTION_DIR/$PROJECT/data -v $CONFIG_DIR:$CONFIG_DIR:ro $CONTAINER_OS:$PROJECT
-    else
-        echo -e '\nRunning of container from image '$CONTAINER_OS':'$PROJECT' with mounting '$PRODUCTION_DIR'/'$PROJECT'/data:'$PRODUCTION_DIR'/'$PROJECT'/data and '$HOST_MOUNT_DIR':'$HOST_MOUNT_DIR 'and '$CONFIG_DIR':'$CONFIG_DIR':ro'
-        sudo docker run -d -t --restart=always -v $PRODUCTION_DIR/$PROJECT/data:$PRODUCTION_DIR/$PROJECT/data -v $HOST_MOUNT_DIR:$HOST_MOUNT_DIR -v $CONFIG_DIR:$CONFIG_DIR:ro $CONTAONER_OS:$PROJECT
-fi
+message="\nRunning of container from image $CONTAINER_OS:$PROJECT with name $PROJECT and mounting volumes $CONFIG_DIR':'$CONFIG_DIR':ro and $PRODUCTION_DIR/$PROJECT/data:$PRODUCTION_DIR/$PROJECT/data"
+
+docker run --detach --tty --name "$PROJECT" --restart=always --volume "$CONFIG_DIR":"$CONFIG_DIR":ro \
+ --volume "$PRODUCTION_DIR"/"$PROJECT"/data:"$PRODUCTION_DIR"/"$PROJECT"/data "$CONTAINER_OS":"$PROJECT"
+
+echo -e "${message}"
