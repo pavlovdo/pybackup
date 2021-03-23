@@ -29,7 +29,7 @@ B) If not:
 sudo chmod +x *.py *.sh
 ```
 
-3) Change example configuration file pybackup.conf: backup main directory, default_storage_period;
+3) Change example configuration file pybackup.conf: backup main directory, default_storage_period.
 Also you can add or remove monitoring your backup directories in backup_custom_dirs.json for customize
  storage period or delete/not delete data in its.
 
