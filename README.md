@@ -19,7 +19,8 @@ cd /usr/local
 sudo git clone https://github.com/pavlovdo/pybackup
 ```
 
-2) A) Check execute permissions for scripts:
+2) 
+A) Check execute permissions for scripts:
 ```
 ls -l *.py *.sh
 ```
