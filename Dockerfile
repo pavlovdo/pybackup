@@ -1,5 +1,5 @@
 FROM centos:latest
-MAINTAINER Denis O. Pavlov pavlovdo@gmail.com
+LABEL maintainer="Denis O. Pavlov pavlovdo@gmail.com"
 
 ARG project
 
@@ -9,13 +9,13 @@ RUN   dnf update -y && \
       python36 && \
       rm -rf /var/cache/dnf
 
+COPY *.py requirements.txt /usr/local/orbit/${project}/
+WORKDIR /usr/local/orbit/${project}
+
 ENV TZ=Europe/Moscow
 RUN ln -fs /usr/share/zoneinfo/$TZ /etc/localtime
 
-COPY *.py requirements.txt /etc/zabbix/externalscripts/${project}/
-WORKDIR /usr/local/orbit/${project}
-
-RUN echo "00 04 * * *   /usr/local/orbit/pybackup/pybackup.py > /usr/local/orbit/pybackup/data/output" > /tmp/crontab && \
-        crontab /tmp/crontab && rm /tmp/crontab
+RUN echo "00 04 * * *   /usr/local/orbit/pybackup/pybackup.py 1> /proc/1/fd/1 2> /proc/1/fd/2" > /tmp/crontab && \
+      crontab /tmp/crontab && rm /tmp/crontab
 
 CMD ["crond","-n"]

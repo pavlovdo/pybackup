@@ -1,0 +1,10 @@
+{
+    "/backup/cc/records": {
+        "storage_period": 365,
+        "delete": "no"
+    },
+    "/backup/data": {
+        "storage_period": 365,
+        "delete": "yes"
+    }
+}

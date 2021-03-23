@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 #
-# Recursively removing old backup files in backup directory
+# Recursively removing old backup files in backup directories
 #
 # 2018-2021 Denis Pavlov
 #
@@ -10,61 +10,65 @@ import os
 import time
 
 from configread import configread
+from json import load
 
+
+# set project name as current directory name
+project = os.path.abspath(__file__).split('/')[-2]
 
 # set config file name
-conf_file = '/usr/local/orbit/pybackup/conf.d/pybackup.conf'
+conf_file = '/usr/local/pybackup/conf.d/pybackup.conf'
 
 # read configuration parameters and save it to dictionary
-backup_parameters = configread(conf_file, 'Backup', 'backup_main_dir',
-                               'backup_dirs_exclude',
-                               'backup_dirs_lts',
-                               'default_max_days')
+backup_parameters = configread(conf_file, 'Backup', 'backup_custom_dirs_file',
+                               'backup_main_dir', 'default_storage_period')
 
-# get root backup directory
 backup_main_dir = backup_parameters['backup_main_dir']
+default_storage_period = int(backup_parameters['default_storage_period'])
 
-# get list of directories where exist files for long time storing
-backup_dirs_lts = backup_parameters['backup_dirs_lts'].split(',')
+# form dictionary of backup directories parameters
+with open(backup_parameters['backup_custom_dirs_file'], "r") as backup_custom_dirs_file:
+    backup_custom_dirs = load(backup_custom_dirs_file)
 
-# initialize default max days for backup storing
-max_days = backup_parameters['default_max_days']
-
-# get list of exclude directories with undeletable backups
-backup_dirs_exclude = backup_parameters['backup_dirs_exclude']
-backup_dirs_exclude = eval(backup_dirs_exclude)
+print('Directories with custom config:')
+for directory, parameters in backup_custom_dirs.items():
+    print(f'directory: {directory}, parameters: {parameters}')
 
 
-def removeoldfiles(entry):
-    """ remove old backup files """
+def remove_old_files(entry, parent_storage_period):
 
-    creation_days_ago = int((time.time() - os.stat(entry.path).st_mtime)/86400)
-    max_days = int(backup_parameters['default_max_days'])
-    if os.path.dirname(entry.path) in backup_dirs_lts:
-        max_days = 184
-    if creation_days_ago > max_days:
-        os.remove(entry.path)
-        print('File', entry.path, 'was modified more than ' +
-              str(max_days) + ' days ago and will be deleted\n')
+    if entry.is_dir():
+        if entry.path not in backup_custom_dirs:
+            print(
+                f'Directory {entry.path} will be scanned for old backup files')
+            for entry in os.scandir(entry.path):
+                remove_old_files(entry, parent_storage_period)
+        else:
+            is_delete = backup_custom_dirs[entry.path].get('delete', 'no')
+            if is_delete == 'yes':
+                storage_period = backup_custom_dirs[entry.path].get(
+                    'storage_period', parent_storage_period)
+                print(
+                    f'Directory {entry.path} have custom config and '
+                    f'will be scanned for backup files older than {storage_period} days')
+                for entry in os.scandir(entry.path):
+                    remove_old_files(entry, storage_period)
+            else:
+                print(f'Directory {entry.path} is protected from deleting')
+    elif entry.is_file():
+        creation_days_ago = int(
+            (time.time() - os.stat(entry.path).st_mtime)/86400)
+        if creation_days_ago > parent_storage_period:
+            os.remove(entry.path)
+            print(
+                f'File {entry.path} was modified more than {parent_storage_period} days ago and deleted')
 
 
 def main():
 
     # scan backup root directory
-    for entry1 in os.scandir(backup_main_dir):
-        if entry1.is_dir() and entry1 not in backup_dirs_exclude:
-            # scan subdirectories for searching and deleting old files
-            for entry2 in os.scandir(entry1.path):
-                if entry2.is_file():
-                    removeoldfiles(entry2)
-                elif entry2.is_dir() and entry2 not in backup_dirs_exclude:
-                    for entry3 in os.scandir(entry2.path):
-                        if entry3.is_file():
-                            removeoldfiles(entry3)
-                        elif entry3.is_dir() and entry3 not in backup_dirs_exclude:
-                            for entry4 in os.scandir(entry3.path):
-                                if entry4.is_file():
-                                    removeoldfiles(entry4)
+    for entry in os.scandir(backup_main_dir):
+        remove_old_files(entry, default_storage_period)
 
 
 if __name__ == "__main__":
