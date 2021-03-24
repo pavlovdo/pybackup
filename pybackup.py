@@ -21,10 +21,14 @@ conf_file = '/usr/local/pybackup/conf.d/pybackup.conf'
 
 # read configuration parameters and save it to dictionary
 backup_parameters = configread(conf_file, 'Backup', 'backup_custom_dirs_file',
-                               'backup_main_dir', 'default_storage_period')
+                               'backup_main_dir', 'default_storage_period',
+                               'debug')
 
 backup_main_dir = backup_parameters['backup_main_dir']
 default_storage_period = int(backup_parameters['default_storage_period'])
+
+# get debug boolean variable from config for debugging enable/disable
+debug = eval(backup_parameters['debug'])
 
 # form dictionary of backup directories parameters
 with open(backup_parameters['backup_custom_dirs_file'], "r") as backup_custom_dirs_file:
@@ -39,8 +43,9 @@ def remove_old_files(entry, parent_storage_period):
 
     if entry.is_dir():
         if entry.path not in backup_custom_dirs:
-            print(
-                f'Directory {entry.path} will be scanned for old backup files')
+            if debug:
+                print(
+                    f'Directory {entry.path} will be scanned for old backup files')
             for entry in os.scandir(entry.path):
                 remove_old_files(entry, parent_storage_period)
         else:

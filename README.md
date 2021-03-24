@@ -14,9 +14,8 @@ Installation
 ============
 1) Clone pybackup repo to directory /usr/local on your backup host:
 ```
-sudo mkdir -p /usr/local
-cd /usr/local
-sudo git clone https://github.com/pavlovdo/pybackup
+sudo git clone https://github.com/pavlovdo/pybackup /usr/local/pybackup
+cd /usr/local/pybackup
 ```
 
 2) 
@@ -32,6 +31,7 @@ sudo chmod +x *.py *.sh
 3) Change example configuration file pybackup.conf: backup main directory, default_storage_period.
 Also you can add or remove monitoring your backup directories in backup_custom_dirs.json for customize
  storage period or delete/not delete data in its.
+ If you want to print all scanned directories then set Debug = True.
 
 4) Further you have options: run scripts from host or run scripts from docker container.
 
